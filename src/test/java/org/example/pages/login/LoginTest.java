@@ -38,6 +38,10 @@ public class LoginTest extends BaseTest {
         registerForm.inputCheckboxReceiveOffers.click();
         registerForm.buttonSave.click();
 
+        WebDriverWait wait = new WebDriverWait(webDriver, Duration.ofSeconds(5));
+        wait.until(d -> d.findElement(By.partialLinkText("Sign out")));
+        wait.until(d -> ExpectedConditions.urlToBe(BaseTest.baseLink));
+
         webDriver.quit();
     }
 

@@ -41,6 +41,7 @@ public class CartTest extends BaseTest {
 
         WebDriverWait wait = new WebDriverWait(webDriver, Duration.ofSeconds(5));
         wait.until(d -> d.findElement(By.partialLinkText("Sign out")));
+        wait.until(d -> ExpectedConditions.urlToBe(BaseTest.baseLink));
 
         cookies = webDriver.manage().getCookies().stream().toList();
         webDriver.quit();
