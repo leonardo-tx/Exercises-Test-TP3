@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.time.Duration;
@@ -62,5 +63,6 @@ public class LoginTest extends BaseTest {
 
         WebDriverWait wait = new WebDriverWait(webDriver, Duration.ofSeconds(5));
         assertNotNull(wait.until(d -> d.findElement(By.partialLinkText("Sign out"))));
+        wait.until(d -> ExpectedConditions.urlToBe(BaseTest.baseLink));
     }
 }

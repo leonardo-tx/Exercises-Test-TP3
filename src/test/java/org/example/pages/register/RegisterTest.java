@@ -8,6 +8,7 @@ import org.openqa.selenium.OutputType;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.io.File;
@@ -363,10 +364,12 @@ public class RegisterTest extends BaseTest {
     private void checkShouldHaveSignOut() {
         WebDriverWait wait = new WebDriverWait(webDriver, Duration.ofSeconds(8));
         assertNotNull(wait.until(d -> d.findElement(By.partialLinkText("Sign out"))));
+        wait.until(d -> ExpectedConditions.urlToBe(BaseTest.baseLink));
     }
 
     private void checkShouldNotHaveSignOut() {
         webDriver.manage().timeouts().implicitlyWait(Duration.ofSeconds(3));
         assertTrue(webDriver.findElements(By.partialLinkText("Sign out")).isEmpty());
+        assertNotEquals(BaseTest.baseLink, webDriver.getCurrentUrl());
     }
 }
