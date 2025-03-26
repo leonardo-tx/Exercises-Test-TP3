@@ -6,8 +6,8 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 
-public class RegisterForm {
-    public RegisterForm(WebDriver driver) {
+public class RegisterPage {
+    public RegisterPage(WebDriver driver) {
         PageFactory.initElements(driver.findElement(By.id("customer-form")), this);
     }
 

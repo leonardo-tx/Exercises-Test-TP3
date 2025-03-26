@@ -1,4 +1,4 @@
-package org.example.pages.review;
+package org.example.pages.product;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
@@ -9,8 +9,8 @@ import org.openqa.selenium.support.PageFactory;
 import java.util.List;
 
 public class ReviewForm {
-    public ReviewForm(WebDriver driver) {
-        PageFactory.initElements(driver.findElement(By.id("post-product-comment-form")), this);
+    public ReviewForm(WebDriver webDriver) {
+        PageFactory.initElements(webDriver.findElement(By.id("post-product-comment-form")), this);
     }
 
     @FindBy(className = "star")

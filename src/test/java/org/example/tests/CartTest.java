@@ -1,7 +1,12 @@
-package org.example.pages.cart;
+package org.example.tests;
 
+import org.example.actions.RegisterAction;
+import org.example.dtos.Gender;
+import org.example.dtos.UserRegisterDTO;
 import org.example.pages.BaseTest;
-import org.example.pages.register.RegisterForm;
+import org.example.pages.checkout.CheckoutPage;
+import org.example.pages.product.ProductAddForm;
+import org.example.pages.register.RegisterPage;
 import org.junit.jupiter.api.*;
 import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -13,6 +18,7 @@ import java.util.List;
 import java.util.Random;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class CartTest extends BaseTest {
@@ -25,23 +31,22 @@ public class CartTest extends BaseTest {
     static void setupBeforeAll() {
         WebDriver webDriver = new ChromeDriver();
         webDriver.get(BaseTest.baseLink + "registration");
-
-        RegisterForm registerForm = new RegisterForm(webDriver);
-        registerForm.radioInputMale.click();
-        registerForm.inputFirstName.sendKeys("Leonardo");
-        registerForm.inputLastName.sendKeys("Teixeira");
-        registerForm.inputEmail.sendKeys("123@gmail.com");
-        registerForm.inputPassword.sendKeys("192837465Pas$wnbcjhsbzghs");
-        registerForm.inputBirthDate.sendKeys("12/16/2002");
-        registerForm.inputCheckboxAgreeTerms.click();
-        registerForm.inputCheckboxDataPrivacy.click();
-        registerForm.inputCheckboxNewsletter.click();
-        registerForm.inputCheckboxReceiveOffers.click();
-        registerForm.buttonSave.click();
+        UserRegisterDTO userRegisterDTO = UserRegisterDTO.builder()
+                .gender(Gender.MALE)
+                .firstName("Leonardo")
+                .lastName("Teixeira")
+                .email("123@gmail.com")
+                .password("192837465Pas$wnbcjhsbzghs")
+                .birthDate("12/16/2002")
+                .agreeTerms(true)
+                .dataPrivacy(true)
+                .receiveNewsletter(true)
+                .receiveOffers(true)
+                .build();
+        RegisterAction.perform(webDriver, new RegisterPage(webDriver), userRegisterDTO);
 
         WebDriverWait wait = new WebDriverWait(webDriver, Duration.ofSeconds(5));
-        wait.until(d -> d.findElement(By.partialLinkText("Sign out")));
-        wait.until(d -> ExpectedConditions.urlToBe(BaseTest.baseLink));
+        wait.until(ExpectedConditions.urlToBe(BaseTest.baseLink));
 
         cookies = webDriver.manage().getCookies().stream().toList();
         webDriver.quit();
@@ -50,6 +55,7 @@ public class CartTest extends BaseTest {
     @BeforeEach
     void setupBeforeEach() {
         webDriver = new ChromeDriver();
+        webDriver.manage().window().maximize();
         webDriver.get(BaseTest.baseLink);
 
         for (Cookie cookie : cookies) {
@@ -137,26 +143,26 @@ public class CartTest extends BaseTest {
         divCheckout.findElement(By.tagName("a")).click();
 
         wait.until(d -> d.findElement(By.className("js-address-form")));
-        AddressForm addressForm = new AddressForm(webDriver);
+        CheckoutPage checkoutPage = new CheckoutPage(webDriver);
 
-        addressForm.inputAddress.sendKeys("Endereço específico");
-        addressForm.inputPostalCode.sendKeys("12345");
-        addressForm.inputCity.sendKeys("Rio de Janeiro");
-        addressForm.buttonContinue.click();
+        checkoutPage.addressForm.inputAddress.sendKeys("Endereço específico");
+        checkoutPage.addressForm.inputPostalCode.sendKeys("12345");
+        checkoutPage.addressForm.inputCity.sendKeys("Rio de Janeiro");
+        checkoutPage.addressForm.buttonContinue.click();
 
         WebElement buttonContinue = wait.until(d -> d.findElement(By.name("confirmDeliveryOption")));
         buttonContinue.click();
 
         wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("checkout-payment-step")));
+        checkoutPage.update(webDriver);
+        checkoutPage.paymentForm.inputPayByBankWire.click();
+        checkoutPage.paymentForm.agreeTerms.click();
 
-        PaymentForm paymentForm = new PaymentForm(webDriver);
-        paymentForm.inputPayByBankWire.click();
-        paymentForm.agreeTerms.click();
+        wait.until(d -> checkoutPage.paymentForm.buttonPlaceOrder.isEnabled());
+        checkoutPage.paymentForm.buttonPlaceOrder.click();
 
-        wait.until(d -> paymentForm.buttonPlaceOrder.isEnabled());
-        paymentForm.buttonPlaceOrder.click();
-
-        wait.until(d -> d.findElement(By.id("content-hook_order_confirmation")));
+        WebElement orderConfirmation = wait.until(d -> d.findElement(By.id("content-hook_order_confirmation")));
+        assertTrue(orderConfirmation.isDisplayed());
     }
 
     private void goToRandomProduct() {

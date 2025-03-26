@@ -1,4 +1,4 @@
-package org.example.pages.others;
+package org.example.tests;
 
 import org.example.pages.BaseTest;
 import org.junit.jupiter.api.AfterEach;
@@ -20,6 +20,7 @@ public class ScrollTest extends BaseTest {
     @BeforeEach
     void setupBeforeEach() {
         webDriver = new ChromeDriver();
+        webDriver.manage().window().maximize();
         webDriver.get(BaseTest.baseLink);
     }
 

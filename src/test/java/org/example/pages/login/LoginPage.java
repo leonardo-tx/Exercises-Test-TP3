@@ -6,8 +6,8 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 
-public class LoginForm {
-    public LoginForm(WebDriver driver) {
+public class LoginPage {
+    public LoginPage(WebDriver driver) {
         PageFactory.initElements(driver.findElement(By.id("login-form")), this);
     }
 
